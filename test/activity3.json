@@ -1,0 +1,67 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "this is test fomration templeat to resuse",
+    "Parameters": {
+    "zone1": {
+        "Description": "slect avilability zone 1",
+        "Type": "AWS::EC2::AvailabilityZone::Name",
+        "Default": "ap-south-1a"
+    },
+    "zone2": {
+        "Description": "slect avilability zone 1",
+        "Type": "AWS::EC2::AvailabilityZone::Name",
+        "Default": "ap-south-1b"
+    }
+    
+    
+},
+"Resources":{
+    
+    "vpc": {
+        "Description": "thios is vpc of this template",
+          "Type": "AWS::EC2::VPC",
+          "Properties": {
+            "CidrBlock": "192.168.0.0/16",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "vpcd"
+                }
+            ]
+          }
+        }
+        ,
+    
+    "subnet1": {
+        "Description": "this is subne1",
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "AvailabilityZone": {"Ref": "zone1"},
+        "VpcId": {"Ref": "vpc"},
+        "CidrBlock": "192.168.1.0/24",
+        "Tags": [  {
+            "Key": "Name",
+            "Value": "subnet1"
+        }]
+      }
+    },
+
+    "subnet2": {
+        "Description": "this is subne1",
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "AvailabilityZone": {"Ref": "zone2"},
+        "VpcId": {"Ref": "vpc"},
+        "CidrBlock": "192.168.2.0/24",
+        "Tags": [  {
+            "Key": "Name",
+            "Value": "subnet2"
+        }]
+      }
+    }
+
+    
+    }
+    
+}
+
