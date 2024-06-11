@@ -1,0 +1,346 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "this is test fomration templeat to resuse",
+    "Parameters": {
+        "zone1": {
+            "Description": "this is avilability zone 1",
+            "Type": "AWS::EC2::AvailabilityZone::Name",
+            "Default": "ap-south-1a"
+        },
+        "zone2": {
+            "Description": "this is zone 2",
+            "Type": "AWS::EC2::AvailabilityZone::Name",
+            "Default": "ap-south-1b"
+        },
+        "vpccird": {
+            "Description": "this is cidr range of vpc",
+            "Type": "String",
+            "Default": "192.168.0.0/16"
+        },
+        "subnet1cider": {
+            "Description": "this is cider of subnet1",
+            "Type": "String",
+            "Default": "192.168.1.0/24"
+        },
+        "subnet2cider": {
+            "Description": "this is cider of subnet2",
+            "Type": "String",
+            "Default": "192.168.2.0/24"
+        },
+        "subnet3cider": {
+            "Description": "this is cider of subnet3",
+            "Type": "String",
+            "Default": "192.168.3.0/24"
+        },
+        "subnet4cider": {
+            "Description": "this is cider of subnet4",
+            "Type": "String",
+            "Default": "192.168.4.0/24"
+        },
+        "keypair": {
+            "Description": "this is keypair ",
+            "Type": "AWS::EC2::KeyPair::KeyName",
+            "Default": "all"
+        },
+        "amiid": {
+            "Description": "this is ami id of instance ",
+            "Type": "String",
+            "Default": "ami-0f58b397bc5c1f2e8"
+        }
+    },
+    "Resources": {
+        "vpcd": {
+            "Type": "AWS::EC2::VPC",
+            "Properties": {
+                "CidrBlock": {
+                    "Ref": "vpccird"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "vpctest"
+                    }
+                ]
+            }
+        },
+        "subnect1": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": {
+                    "Ref": "zone1"
+                },
+                "VpcId": {
+                    "Ref": "vpcd"
+                },
+                "CidrBlock": {
+                    "Ref": "subnet1cider"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "subnect1"
+                    }
+                ]
+            }
+        },
+        "subnect2": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": {
+                    "Ref": "zone2"
+                },
+                "VpcId": {
+                    "Ref": "vpcd"
+                },
+                "CidrBlock": {
+                    "Ref": "subnet2cider"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "subnect2"
+                    }
+                ]
+            }
+        },
+        "subnect3": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": {
+                    "Ref": "zone1"
+                },
+                "VpcId": {
+                    "Ref": "vpcd"
+                },
+                "CidrBlock": {
+                    "Ref": "subnet3cider"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "subnect3"
+                    }
+                ]
+            }
+        },
+        "subnect4": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": {
+                    "Ref": "zone2"
+                },
+                "VpcId": {
+                    "Ref": "vpcd"
+                },
+                "CidrBlock": {
+                    "Ref": "subnet4cider"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "subnect4"
+                    }
+                ]
+            }
+        },
+        "igtest": {
+            "Type": "AWS::EC2::InternetGateway",
+            "Properties": {
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "igwtest"
+                    }
+                ]
+            }
+        },
+        "AttachGateway": {
+            "Type": "AWS::EC2::VPCGatewayAttachment",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "vpcd"
+                },
+                "InternetGatewayId": {
+                    "Ref": "igtest"
+                }
+            }
+        },
+        "publicrt": {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "vpcd"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "public"
+                    }
+                ]
+            }
+        },
+        "privatert": {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "vpcd"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "private"
+                    }
+                ]
+            }
+        },
+        "routeName": {
+            "Type": "AWS::EC2::Route",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "publicrt"
+                },
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": {
+                    "Ref": "igtest"
+                }
+            }
+        },
+        "subnet1rc": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "subnect1"
+                },
+                "RouteTableId": {
+                    "Ref": "publicrt"
+                }
+            }
+        },
+        "subnet2rc": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "subnect2"
+                },
+                "RouteTableId": {
+                    "Ref": "privatert"
+                }
+            }
+        },
+        "subnet3rc": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "subnect3"
+                },
+                "RouteTableId": {
+                    "Ref": "publicrt"
+                }
+            }
+        },
+        "subnet4rc": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "subnect4"
+                },
+                "RouteTableId": {
+                    "Ref": "privatert"
+                }
+            }
+        },
+        "websec": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "this is test security group",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 80,
+                        "ToPort": 80,
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 22,
+                        "ToPort": 22,
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "vpcd"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "testsg"
+                    }
+                ]
+            }
+        },
+        "ec2test": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "KeyName": {
+                    "Ref": "keypair"
+                },
+                "ImageId": {
+                    "Ref": "amiid"
+                },
+                "InstanceType": "t2.micro",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "Test"
+                    }
+                ],
+                "NetworkInterfaces": [
+                    {
+                        "AssociatePublicIpAddress": true,
+                        "SubnetId": {
+                            "Ref": "subnect1"
+                        },
+                        "DeviceIndex": 0,
+                        "GroupSet": [
+                            {
+                                "Ref": "websec"
+                            }
+                        ]
+                    }
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "\n",
+                            [
+                                "#!/bin/bash -ex",
+                                "sudo apt update",
+                                "sudo apt install apache2 -y",
+                                "sudo systemctl start apache2",
+                                "sudo systemctl enable apache2"
+                            ]
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "Outputs": {
+        "weburl": {
+            "Value": {
+                "Fn::Join": [
+                    "//",
+                    [
+                        "http:",
+                        {
+                            "Fn::GetAtt": [
+                                "ec2test",
+                                "PublicIp"
+                            ]
+                        }
+                    ]
+                ]
+            }
+        }
+    }
+}
